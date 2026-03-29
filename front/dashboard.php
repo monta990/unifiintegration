@@ -21,30 +21,9 @@ Html::header(
     'PluginUnifiintegrationMenu'
 );
 
-$cfg  = PluginUnifiintegrationConfig::getConfig();
-$data = PluginUnifiintegrationSync::getDashboardStats();
-
-$hasKey      = !empty($cfg['api_key']);
-$rootdoc     = $CFG_GLPI['root_doc'];
-$last_sync   = htmlspecialchars($cfg['last_sync']          ?? __('Never', 'unifiintegration'), ENT_QUOTES);
-$last_status = $cfg['last_sync_status'] ?? '';
-$last_msg    = htmlspecialchars($cfg['last_sync_message']  ?? '', ENT_QUOTES);
-
-$totalDevices = array_sum($data['byStatus']);
-$totalSites   = (int)$data['siteCnt'];
-
-$statusColors = [
-    'online'   => '#22c55e',
-    'offline'  => '#ef4444',
-    'updating' => '#f59e0b',
-    'unknown'  => '#94a3b8',
-];
-$fwColors = [
-    'upToDate'        => '#22c55e',
-    'updateAvailable' => '#f59e0b',
-    'upgrading'       => '#3b82f6',
-    'unknown'         => '#94a3b8',
-];
+$cfg          = PluginUnifiintegrationConfig::getConfig();
+$hasKey       = !empty($cfg['api_key']);
+$refreshInt   = max(60, (int)($cfg['refresh_interval'] ?? 600));
 
 if (!$hasKey) {
     $config_url = '/plugins/unifiintegration/front/config.form.php';
@@ -63,8 +42,22 @@ if (!$hasKey) {
     Html::footer();
     return;
 }
+
+$data = PluginUnifiintegrationSync::getDashboardStats();
+
+$last_sync   = htmlspecialchars($cfg['last_sync']          ?? __('Never', 'unifiintegration'), ENT_QUOTES);
+$last_status = $cfg['last_sync_status'] ?? '';
+$last_msg    = htmlspecialchars($cfg['last_sync_message']  ?? '', ENT_QUOTES);
+
+$totalDevices = array_sum($data['byStatus']);
+$totalSites   = (int)$data['siteCnt'];
+
+$statusColors = ['online'=>'#22c55e','offline'=>'#ef4444','updating'=>'#f59e0b','unknown'=>'#94a3b8'];
+$fwColors     = ['upToDate'=>'#22c55e','updateAvailable'=>'#f59e0b','upgrading'=>'#3b82f6','unknown'=>'#94a3b8'];
+
+$AJAX_URL = htmlspecialchars(($CFG_GLPI['root_doc'] ?? '') . '/plugins/unifiintegration/front/ajax.php', ENT_QUOTES, 'UTF-8');
 ?>
-<div class="container-lg px-3 py-3">
+<div class="container-fluid px-4 py-3">
 
   <!-- Header bar -->
   <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
@@ -74,34 +67,37 @@ if (!$hasKey) {
       <span class="badge bg-primary ms-1"><?= PLUGIN_UNIFIINTEGRATION_VERSION ?></span>
     </div>
     <div class="d-flex align-items-center gap-2 flex-wrap">
-      <span class="text-muted small">
-        <i class="ti ti-clock me-1"></i><?= __('Last sync', 'unifiintegration') ?>:
-        <strong id="last-sync-time"><?= $last_sync ?></strong>
+      <span class="text-muted small me-1">
+        <i class="ti ti-clock me-1"></i><?= __('Last sync', 'unifiintegration') ?>: <strong><?= $last_sync ?></strong>
       </span>
-      <button id="btn-sync" class="btn btn-primary btn-sm">
-        <span id="sync-icon"><i class="ti ti-refresh me-1"></i></span>
-        <?= __('Sync now', 'unifiintegration') ?>
+      <small class="text-muted" id="unifi-refresh-countdown"></small>
+      <button type="button" id="unifi-refresh-btn" class="btn btn-sm btn-outline-primary">
+        <i class="ti ti-refresh me-1" id="unifi-refresh-icon"></i><?= __('Sync now', 'unifiintegration') ?>
       </button>
-      <a href="/plugins/unifiintegration/front/config.form.php" class="btn btn-outline-secondary btn-sm">
+      <a href="/plugins/unifiintegration/front/config.form.php" class="btn btn-sm btn-outline-secondary">
         <i class="ti ti-settings me-1"></i><?= __('Settings', 'unifiintegration') ?>
       </a>
     </div>
   </div>
 
-  <div id="sync-toast" class="alert d-none mb-3"></div>
+  <?php if ($last_status === 'error'): ?>
+  <div class="alert alert-danger d-flex gap-2 align-items-start mb-3">
+    <i class="ti ti-alert-circle mt-1"></i>
+    <div><strong><?= __('Last sync failed', 'unifiintegration') ?></strong><br><small><?= $last_msg ?></small></div>
+  </div>
+  <?php endif; ?>
 
   <!-- KPI cards -->
   <div class="row g-3 mb-4">
 <?php
 $online  = $data['byStatus']['online']  ?? 0;
 $offline = $data['byStatus']['offline'] ?? 0;
-$cards = [
+foreach ([
     ['ti-devices',      __('Total Devices', 'unifiintegration'), $totalDevices, 'primary'],
     ['ti-circle-check', __('Online',        'unifiintegration'), $online,       'success'],
     ['ti-circle-x',     __('Offline',       'unifiintegration'), $offline,      'danger'],
     ['ti-map-pin',      __('Sites',         'unifiintegration'), $totalSites,   'info'],
-];
-foreach ($cards as [$icon, $label, $val, $color]):
+] as [$icon, $label, $val, $color]):
 ?>
     <div class="col-6 col-md-3">
       <div class="card h-100 border-0 shadow-sm">
@@ -109,10 +105,7 @@ foreach ($cards as [$icon, $label, $val, $color]):
           <div class="rounded-3 p-2 bg-<?= $color ?>-lt">
             <i class="ti <?= $icon ?> fs-3 text-<?= $color ?>"></i>
           </div>
-          <div>
-            <div class="fs-2 fw-bold lh-1"><?= $val ?></div>
-            <div class="text-muted small"><?= $label ?></div>
-          </div>
+          <div><div class="fs-2 fw-bold lh-1"><?= $val ?></div><div class="text-muted small"><?= $label ?></div></div>
         </div>
       </div>
     </div>
@@ -124,17 +117,13 @@ foreach ($cards as [$icon, $label, $val, $color]):
     <div class="col-md-5">
       <div class="card shadow-sm h-100">
         <div class="card-header fw-bold"><i class="ti ti-chart-pie me-1"></i><?= __('Device Status', 'unifiintegration') ?></div>
-        <div class="card-body d-flex align-items-center justify-content-center">
-          <div id="chart-status" style="width:100%;height:260px;"></div>
-        </div>
+        <div class="card-body"><div id="chart-status" style="width:100%;height:260px;"></div></div>
       </div>
     </div>
     <div class="col-md-7">
       <div class="card shadow-sm h-100">
         <div class="card-header fw-bold"><i class="ti ti-chart-bar me-1"></i><?= __('Firmware Status', 'unifiintegration') ?></div>
-        <div class="card-body d-flex align-items-center justify-content-center">
-          <div id="chart-firmware" style="width:100%;height:260px;"></div>
-        </div>
+        <div class="card-body"><div id="chart-firmware" style="width:100%;height:260px;"></div></div>
       </div>
     </div>
   </div>
@@ -143,7 +132,7 @@ foreach ($cards as [$icon, $label, $val, $color]):
   <div class="card shadow-sm mb-4">
     <div class="card-header d-flex align-items-center justify-content-between">
       <span class="fw-bold"><i class="ti ti-list me-1"></i><?= __('Devices', 'unifiintegration') ?> <span class="badge bg-secondary ms-1"><?= $totalDevices ?></span></span>
-      <input type="search" id="device-search" class="form-control form-control-sm w-auto" placeholder="<?= __('Search…', 'unifiintegration') ?>">
+      <input type="search" id="device-search" class="form-control form-control-sm w-auto" placeholder="<?= htmlspecialchars(__('Search…', 'unifiintegration'), ENT_QUOTES) ?>">
     </div>
     <div class="table-responsive">
       <table class="table table-hover table-sm align-middle mb-0" id="device-table">
@@ -177,7 +166,7 @@ foreach ($cards as [$icon, $label, $val, $color]):
 ?>
           <tr>
             <td class="fw-semibold">
-              <?php if ((int)($dev['is_console'] ?? 0)): ?><i class="ti ti-server me-1 text-primary"></i><?php endif; ?>
+              <?php if ((int)($dev['is_console'] ?? 0)): ?><i class="ti ti-server me-1 text-primary" title="Console"></i><?php endif; ?>
               <?= htmlspecialchars($dev['name'] ?? '', ENT_QUOTES) ?>
             </td>
             <td class="text-muted small"><?= htmlspecialchars($dev['model'] ?? '', ENT_QUOTES) ?></td>
@@ -237,71 +226,123 @@ $byStatusJson   = json_encode($data['byStatus'],  JSON_UNESCAPED_UNICODE);
 $byFirmwareJson = json_encode($data['byFirmware'], JSON_UNESCAPED_UNICODE);
 $statusColorsJson = json_encode($statusColors);
 $fwColorsJson     = json_encode($fwColors);
-$t_syncing  = addslashes(__('Syncing…',      'unifiintegration'));
-$t_sync_ok  = addslashes(__('Sync complete', 'unifiintegration'));
-$t_sync_err = addslashes(__('Sync error',    'unifiintegration'));
+$t_syncing  = addslashes(__('Syncing…',   'unifiintegration'));
+$t_sync_err = addslashes(__('Sync error', 'unifiintegration'));
 
 Html::scriptBlock(<<<JS
 (function(){
-  const byStatus   = {$byStatusJson};
-  const byFirmware = {$byFirmwareJson};
-  const statusColors = {$statusColorsJson};
-  const fwColors     = {$fwColorsJson};
+  /* ── spin CSS ────────────────────────────────────────────── */
+  if (!document.getElementById('unifi-spin-css')) {
+    var s = document.createElement('style');
+    s.id  = 'unifi-spin-css';
+    s.textContent = '@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
+  }
 
-  function resolveColor(map, key) { return map[key] || '#94a3b8'; }
+  var AJAX_URL  = '{$AJAX_URL}';
+  var REFRESH_S = {$refreshInt};
+  var countdown = REFRESH_S;
+  var syncing   = false;
+  var countEl   = document.getElementById('unifi-refresh-countdown');
+  var btn       = document.getElementById('unifi-refresh-btn');
+  var icon      = document.getElementById('unifi-refresh-icon');
 
-  const chartStatus = echarts.init(document.getElementById('chart-status'));
-  chartStatus.setOption({
-    tooltip: { trigger:'item', formatter:'{b}: {c} ({d}%)' },
-    legend:  { orient:'vertical', right:10, top:'center' },
-    series: [{ name:'Status', type:'pie', radius:['40%','65%'], center:['40%','50%'],
-      data: Object.entries(byStatus).map(([k,v]) => ({name:k, value:v, itemStyle:{color:resolveColor(statusColors,k)}})),
-      label:{show:false}, emphasis:{label:{show:true, fontSize:14, fontWeight:'bold'}} }]
-  });
+  function fmtTime(s){ return s >= 60 ? Math.floor(s/60)+'m '+(s%60)+'s' : s+'s'; }
 
-  const chartFw = echarts.init(document.getElementById('chart-firmware'));
-  const fwLabels = Object.keys(byFirmware);
-  const fwValues = Object.values(byFirmware);
-  chartFw.setOption({
-    tooltip:{trigger:'axis', axisPointer:{type:'shadow'}},
-    grid:{left:20,right:20,bottom:30,top:20,containLabel:true},
-    xAxis:{type:'category', data:fwLabels, axisLabel:{rotate:fwLabels.length>3?15:0, fontSize:11}},
-    yAxis:{type:'value', minInterval:1},
-    series:[{type:'bar', data:fwValues.map((v,i)=>({value:v, itemStyle:{color:resolveColor(fwColors,fwLabels[i]), borderRadius:[4,4,0,0]}}))}]
-  });
+  function doSync() {
+    if (syncing) return;
+    syncing = true;
+    if (icon) { icon.style.cssText = 'animation:spin .8s linear infinite;display:inline-block;'; }
+    if (btn)  btn.disabled = true;
+    if (countEl) countEl.textContent = '{$t_syncing}';
 
-  window.addEventListener('resize', () => { chartStatus.resize(); chartFw.resize(); });
+    var csrf = '';
+    if (typeof window.glpiGetNewCSRFToken === 'function') {
+      csrf = window.glpiGetNewCSRFToken();
+    } else {
+      var m = document.querySelector('meta[property="glpi:csrf_token"]');
+      if (m) csrf = m.getAttribute('content') || '';
+    }
 
-  document.getElementById('device-search').addEventListener('input', function(){
-    const q = this.value.toLowerCase();
-    document.querySelectorAll('#device-table tbody tr').forEach(tr => {
-      tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+    var fd = new FormData();
+    fd.append('action', 'sync');
+    fd.append('_glpi_csrf_token', csrf);
+
+    fetch(AJAX_URL, {method:'POST', credentials:'same-origin', body:fd})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (!d.success) {
+          if (countEl) countEl.textContent = '{$t_sync_err}: ' + (d.message || d.error || '');
+          syncing = false;
+          if (btn) btn.disabled = false;
+          if (icon) icon.style.cssText = '';
+        } else {
+          location.reload();
+        }
+      })
+      .catch(function(){ location.reload(); });
+  }
+
+  if (btn) btn.addEventListener('click', function(){ countdown = REFRESH_S; doSync(); });
+
+  /* Countdown tick every second */
+  if (countEl) countEl.textContent = fmtTime(countdown);
+  setInterval(function(){
+    if (syncing) return;
+    countdown--;
+    if (countdown < 0) { countdown = REFRESH_S; doSync(); return; }
+    if (countEl) countEl.textContent = fmtTime(countdown);
+  }, 1000);
+
+  /* ── Charts (after DOM ready) ────────────────────────────── */
+  function initCharts() {
+    var byStatus    = {$byStatusJson};
+    var byFirmware  = {$byFirmwareJson};
+    var sCols = {$statusColorsJson};
+    var fCols = {$fwColorsJson};
+    function rc(m,k){ return m[k]||'#94a3b8'; }
+
+    var cS = document.getElementById('chart-status');
+    var cF = document.getElementById('chart-firmware');
+    if (!cS || !cF || typeof echarts === 'undefined') return;
+
+    var chartStatus = echarts.init(cS);
+    chartStatus.setOption({
+      tooltip:{trigger:'item',formatter:'{b}: {c} ({d}%)'},
+      legend:{orient:'vertical',right:10,top:'center'},
+      series:[{name:'Status',type:'pie',radius:['40%','65%'],center:['40%','50%'],
+        data:Object.entries(byStatus).map(function(e){return{name:e[0],value:e[1],itemStyle:{color:rc(sCols,e[0])}};}),
+        label:{show:false},emphasis:{label:{show:true,fontSize:14,fontWeight:'bold'}}}]
     });
-  });
 
-  const btn   = document.getElementById('btn-sync');
-  const toast = document.getElementById('sync-toast');
-  if (btn) {
-    btn.addEventListener('click', function(){
-      btn.disabled = true;
-      document.getElementById('sync-icon').innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>';
-      toast.className = 'alert alert-info mb-3';
-      toast.textContent = '{$t_syncing}';
-      const csrfValue = (typeof window.glpiGetNewCSRFToken === 'function')
-        ? window.glpiGetNewCSRFToken()
-        : (document.querySelector('meta[property="glpi:csrf_token"]') || {}).getAttribute('content') || '';
-      const fd = new FormData();
-      fd.append('action', 'sync');
-      fd.append('_glpi_csrf_token', csrfValue);
-      fetch('/plugins/unifiintegration/front/ajax.php', {method:'POST', body:fd})
-        .then(r => r.json())
-        .then(d => {
-          toast.className = d.success ? 'alert alert-success mb-3' : 'alert alert-danger mb-3';
-          toast.textContent = d.success ? '{$t_sync_ok}: ' + (d.message||'') : '{$t_sync_err}: ' + (d.message||'');
-          if (d.success) setTimeout(() => location.reload(), 1500);
-        })
-        .catch(() => { toast.className='alert alert-danger mb-3'; toast.textContent='{$t_sync_err}'; })
-        .finally(() => { btn.disabled=false; document.getElementById('sync-icon').innerHTML='<i class="ti ti-refresh me-1"></i>'; });
+    var chartFw  = echarts.init(cF);
+    var fwLabels = Object.keys(byFirmware);
+    var fwValues = Object.values(byFirmware);
+    chartFw.setOption({
+      tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},
+      grid:{left:20,right:20,bottom:30,top:20,containLabel:true},
+      xAxis:{type:'category',data:fwLabels,axisLabel:{rotate:fwLabels.length>3?15:0,fontSize:11}},
+      yAxis:{type:'value',minInterval:1},
+      series:[{type:'bar',data:fwValues.map(function(v,i){return{value:v,itemStyle:{color:rc(fCols,fwLabels[i]),borderRadius:[4,4,0,0]}};})}]
+    });
+
+    window.addEventListener('resize',function(){chartStatus.resize();chartFw.resize();});
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCharts);
+  } else {
+    initCharts();
+  }
+
+  /* ── Search filter ───────────────────────────────────────── */
+  var searchInput = document.getElementById('device-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', function(){
+      var q = this.value.toLowerCase();
+      document.querySelectorAll('#device-table tbody tr').forEach(function(tr){
+        tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
     });
   }
 })();

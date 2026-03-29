@@ -76,6 +76,7 @@ function plugin_init_unifiintegration(): void
         ];
         Plugin::registerClass('PluginUnifiintegrationConfig');
         Plugin::registerClass('PluginUnifiintegrationSync');
+        Plugin::registerClass('PluginUnifiintegrationUtils');
     }
 }
 

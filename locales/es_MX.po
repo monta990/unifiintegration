@@ -214,3 +214,75 @@ msgstr "Acción desconocida"
 
 msgid "syncUnifi"
 msgstr "Sincronizar dispositivos, sitios y hosts de UniFi a Equipos de Red en GLPI"
+
+msgid "UniFi Site Manager — API Key"
+msgstr "UniFi Site Manager — Clave API"
+
+msgid "Configured"
+msgstr "Configurado"
+
+msgid "Not configured"
+msgstr "No configurado"
+
+msgid "Generate your API Key at"
+msgstr "Genera tu Clave API en"
+
+msgid "The key is read-only (100 req/min). It will only be shown once — store it securely."
+msgstr "La clave es de solo lectura (100 req/min). Solo se muestra una vez — guárdala de forma segura."
+
+msgid "Stored encrypted in the database."
+msgstr "Almacenado cifrado en la base de datos."
+
+msgid "Testing…"
+msgstr "Probando…"
+
+msgid "Connection OK"
+msgstr "Conexión OK"
+
+msgid "Connection failed"
+msgstr "Conexión fallida"
+
+msgid "Enter an API Key first"
+msgstr "Ingresa primero una Clave API"
+
+msgid "Saved — leave empty to keep"
+msgstr "Guardado — deja vacío para conservar"
+
+msgid "Advanced"
+msgstr "Avanzado"
+
+msgid "How often the cron job synchronizes devices. Minimum 5 min."
+msgstr "Con qué frecuencia el cron sincroniza dispositivos. Mínimo 5 min."
+
+msgid "Debug logging"
+msgstr "Registro de depuración"
+
+msgid "Verbose logging (debug mode)"
+msgstr "Registro detallado (modo depuración)"
+
+msgid "Writes detailed API requests and responses to files/log/unifiintegration.log. Use only for troubleshooting."
+msgstr "Escribe solicitudes y respuestas detalladas de API en files/log/unifiintegration.log. Solo para diagnóstico."
+
+msgid "Go to Dashboard"
+msgstr "Ir al Tablero"
+
+msgid "UniFi Configuration"
+msgstr "Configuración de UniFi"
+
+msgid "UniFi not configured yet"
+msgstr "UniFi aún no configurado"
+
+msgid "To start syncing your UniFi devices, set your API Key from UniFi Site Manager."
+msgstr "Para comenzar a sincronizar tus dispositivos UniFi, configura tu Clave API desde UniFi Site Manager."
+
+msgid "Set up UniFi"
+msgstr "Configurar UniFi"
+
+msgid "Last sync failed"
+msgstr "Última sincronización fallida"
+
+msgid "Tablero — auto-actualización (segundos)"
+msgstr "Tablero — auto-actualización (segundos)"
+
+msgid "How often the dashboard auto-syncs. Minimum 60s, default 600s (10 min)."
+msgstr "Con qué frecuencia el tablero se sincroniza automáticamente. Mínimo 60s, predeterminado 600s (10 min)."

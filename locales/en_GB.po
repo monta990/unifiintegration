@@ -214,3 +214,75 @@ msgstr ""
 
 msgid "syncUnifi"
 msgstr ""
+
+msgid "UniFi Site Manager — API Key"
+msgstr ""
+
+msgid "Configured"
+msgstr ""
+
+msgid "Not configured"
+msgstr ""
+
+msgid "Generate your API Key at"
+msgstr ""
+
+msgid "The key is read-only (100 req/min). It will only be shown once — store it securely."
+msgstr ""
+
+msgid "Stored encrypted in the database."
+msgstr ""
+
+msgid "Testing…"
+msgstr ""
+
+msgid "Connection OK"
+msgstr ""
+
+msgid "Connection failed"
+msgstr ""
+
+msgid "Enter an API Key first"
+msgstr ""
+
+msgid "Saved — leave empty to keep"
+msgstr ""
+
+msgid "Advanced"
+msgstr ""
+
+msgid "How often the cron job synchronizes devices. Minimum 5 min."
+msgstr ""
+
+msgid "Debug logging"
+msgstr ""
+
+msgid "Verbose logging (debug mode)"
+msgstr ""
+
+msgid "Writes detailed API requests and responses to files/log/unifiintegration.log. Use only for troubleshooting."
+msgstr ""
+
+msgid "Go to Dashboard"
+msgstr ""
+
+msgid "UniFi Configuration"
+msgstr ""
+
+msgid "UniFi not configured yet"
+msgstr ""
+
+msgid "To start syncing your UniFi devices, set your API Key from UniFi Site Manager."
+msgstr ""
+
+msgid "Set up UniFi"
+msgstr ""
+
+msgid "Last sync failed"
+msgstr ""
+
+msgid "Tablero — auto-actualización (segundos)"
+msgstr ""
+
+msgid "How often the dashboard auto-syncs. Minimum 60s, default 600s (10 min)."
+msgstr ""

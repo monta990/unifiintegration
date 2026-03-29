@@ -36,6 +36,8 @@ function plugin_unifiintegration_install(): bool
                 `last_sync`            timestamp    NULL DEFAULT NULL,
                 `last_sync_status`     varchar(20)  DEFAULT NULL,
                 `last_sync_message`    text         DEFAULT NULL,
+                `debug_logging`        tinyint(1)   NOT NULL DEFAULT '0',
+                `refresh_interval`     int {$sign}  NOT NULL DEFAULT '600',
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$charset} COLLATE={$collation}"
         );

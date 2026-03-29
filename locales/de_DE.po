@@ -214,3 +214,75 @@ msgstr "Unbekannte Aktion"
 
 msgid "syncUnifi"
 msgstr "UniFi-Geräte, Sites und Hosts mit GLPI-Netzwerkgeräten synchronisieren"
+
+msgid "UniFi Site Manager — API Key"
+msgstr "UniFi Site Manager — API-Schlüssel"
+
+msgid "Configured"
+msgstr "Konfiguriert"
+
+msgid "Not configured"
+msgstr "Nicht konfiguriert"
+
+msgid "Generate your API Key at"
+msgstr "Generieren Sie Ihren API-Schlüssel auf"
+
+msgid "The key is read-only (100 req/min). It will only be shown once — store it securely."
+msgstr "Der Schlüssel ist schreibgeschützt (100 Anf./Min.). Er wird nur einmal angezeigt — sichern Sie ihn sorgfältig."
+
+msgid "Stored encrypted in the database."
+msgstr "Verschlüsselt in der Datenbank gespeichert."
+
+msgid "Testing…"
+msgstr "Wird getestet…"
+
+msgid "Connection OK"
+msgstr "Verbindung OK"
+
+msgid "Connection failed"
+msgstr "Verbindung fehlgeschlagen"
+
+msgid "Enter an API Key first"
+msgstr "Geben Sie zuerst einen API-Schlüssel ein"
+
+msgid "Saved — leave empty to keep"
+msgstr "Gespeichert — leer lassen zum Beibehalten"
+
+msgid "Advanced"
+msgstr "Erweitert"
+
+msgid "How often the cron job synchronizes devices. Minimum 5 min."
+msgstr "Wie oft der Cron-Job Geräte synchronisiert. Mindestens 5 Min."
+
+msgid "Debug logging"
+msgstr "Debug-Protokollierung"
+
+msgid "Verbose logging (debug mode)"
+msgstr "Ausführliche Protokollierung (Debug-Modus)"
+
+msgid "Writes detailed API requests and responses to files/log/unifiintegration.log. Use only for troubleshooting."
+msgstr "Schreibt detaillierte API-Anfragen und -Antworten nach files/log/unifiintegration.log. Nur zur Fehlersuche."
+
+msgid "Go to Dashboard"
+msgstr "Zum Dashboard"
+
+msgid "UniFi Configuration"
+msgstr "UniFi-Konfiguration"
+
+msgid "UniFi not configured yet"
+msgstr "UniFi noch nicht konfiguriert"
+
+msgid "To start syncing your UniFi devices, set your API Key from UniFi Site Manager."
+msgstr "Um Ihre UniFi-Geräte zu synchronisieren, konfigurieren Sie Ihren API-Schlüssel im UniFi Site Manager."
+
+msgid "Set up UniFi"
+msgstr "UniFi einrichten"
+
+msgid "Last sync failed"
+msgstr "Letzte Synchronisierung fehlgeschlagen"
+
+msgid "Tablero — auto-actualización (segundos)"
+msgstr "Dashboard — Auto-Aktualisierung (Sekunden)"
+
+msgid "How often the dashboard auto-syncs. Minimum 60s, default 600s (10 min)."
+msgstr "Wie oft das Dashboard automatisch synchronisiert. Mindestens 60s, Standard 600s (10 Min.)."

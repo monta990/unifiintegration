@@ -17,7 +17,7 @@ if (!defined('GLPI_ROOT')) {
 
 class PluginUnifiintegrationSync extends CommonGLPI
 {
-    public static $rightname = 'plugin_unifiintegration_config';
+    public static $rightname = 'config';
 
     // --------------------------------------------------------------------------
     // Manual sync (AJAX)
@@ -26,11 +26,11 @@ class PluginUnifiintegrationSync extends CommonGLPI
     {
         $cfg = PluginUnifiintegrationConfig::getConfig();
         if (empty($cfg['api_key'])) {
-            return [
-                'success' => false,
-                'message' => __('API Key is not configured.', 'unifiintegration'),
-            ];
+            return ['success' => false, 'message' => __('API Key is not configured.', 'unifiintegration')];
         }
+
+        $ts = date('Y-m-d H:i:s');
+        PluginUnifiintegrationUtils::log("[{$ts}] Manual sync triggered");
 
         try {
             $api    = new PluginUnifiintegrationApi($cfg['api_key']);
@@ -38,6 +38,7 @@ class PluginUnifiintegrationSync extends CommonGLPI
             $this->updateLastSync($result, $cfg);
             return $result;
         } catch (RuntimeException $e) {
+            PluginUnifiintegrationUtils::log("[{$ts}] Manual sync error: " . $e->getMessage());
             $err = ['success' => false, 'message' => $e->getMessage()];
             $this->updateLastSync($err, $cfg);
             return $err;
@@ -45,7 +46,7 @@ class PluginUnifiintegrationSync extends CommonGLPI
     }
 
     // --------------------------------------------------------------------------
-    // Cron entry point — GLPI calls cronSyncUnifi() matching task name 'syncUnifi'
+    // Cron entry point — GLPI calls cronSyncUnifi() for task name 'syncUnifi'
     // --------------------------------------------------------------------------
     public static function cronSyncUnifi(CronTask $task): int
     {
@@ -61,26 +62,19 @@ class PluginUnifiintegrationSync extends CommonGLPI
             return 1;
         }
 
-        // update cron task frequency from config
-        if (!empty($cfg['cron_interval'])) {
-            CronTask::register(
-                'PluginUnifiintegrationSync',
-                'sync',
-                (int)$cfg['cron_interval'],
-                ['state' => CronTask::STATE_WAITING]
-            );
-        }
+        $ts = date('Y-m-d H:i:s');
+        PluginUnifiintegrationUtils::log("[{$ts}] Cron syncUnifi start");
 
         try {
             $api    = new PluginUnifiintegrationApi($cfg['api_key']);
             $result = $this->doSync($api, $cfg);
             $this->updateLastSync($result, $cfg);
-            $vol = ($result['devices_synced'] ?? 0)
-                 + ($result['sites_synced']   ?? 0)
-                 + ($result['hosts_synced']   ?? 0);
+            $vol = ($result['devices_synced'] ?? 0) + ($result['sites_synced'] ?? 0) + ($result['hosts_synced'] ?? 0);
             $task->addVolume($vol);
+            PluginUnifiintegrationUtils::log("[{$ts}] Cron complete — " . ($result['message'] ?? ''));
             return 1;
         } catch (RuntimeException $e) {
+            PluginUnifiintegrationUtils::log("[{$ts}] Cron error: " . $e->getMessage());
             $this->updateLastSync(['success' => false, 'message' => $e->getMessage()], $cfg);
             return 0;
         }
@@ -105,10 +99,7 @@ class PluginUnifiintegrationSync extends CommonGLPI
         if (!empty($cfg['sync_sites'])) {
             $siteMap = $this->syncSites($api);
             $counters['sites_synced'] = count($siteMap);
-            $messages[] = sprintf(
-                __('%d site(s) synced to Locations', 'unifiintegration'),
-                count($siteMap)
-            );
+            $messages[] = sprintf(__('%d site(s) synced to Locations', 'unifiintegration'), count($siteMap));
         } else {
             $siteMap = $this->loadSiteMap();
         }
@@ -117,33 +108,30 @@ class PluginUnifiintegrationSync extends CommonGLPI
         if (!empty($cfg['sync_hosts'])) {
             $hostsData = $api->getHosts();
             $hosts     = $hostsData['data'] ?? [];
+            PluginUnifiintegrationUtils::log('[' . date('Y-m-d H:i:s') . '] Hosts API returned ' . count($hosts) . ' host(s)');
             foreach ($hosts as $host) {
+                $hname = $host['userData']['name'] ?? ($host['reportedState']['hostname'] ?? ($host['id'] ?? ''));
+                PluginUnifiintegrationUtils::log("  Syncing host: {$hname}");
                 $this->syncHost($host, $siteMap);
                 $counters['hosts_synced']++;
             }
-            $messages[] = sprintf(
-                __('%d host(s) synced to NetworkEquipment', 'unifiintegration'),
-                $counters['hosts_synced']
-            );
+            $messages[] = sprintf(__('%d host(s) synced to NetworkEquipment', 'unifiintegration'), $counters['hosts_synced']);
         }
 
         // ── Devices → NetworkEquipment ─────────────────────────────────────
         if (!empty($cfg['sync_devices'])) {
-            $devicesData = $api->getDevices();
-            $hostGroups  = $devicesData['data'] ?? [];
+            $hostGroups = $api->getAllDevices();
             foreach ($hostGroups as $group) {
                 $hostId  = $group['hostId']  ?? '';
                 $devices = $group['devices'] ?? [];
                 foreach ($devices as $device) {
                     $device['_hostId'] = $hostId;
+                    PluginUnifiintegrationUtils::log('  Device: ' . ($device['name'] ?? '') . ' MAC:' . ($device['mac'] ?? '') . ' status:' . ($device['status'] ?? ''));
                     $this->syncDevice($device, $siteMap);
                     $counters['devices_synced']++;
                 }
             }
-            $messages[] = sprintf(
-                __('%d device(s) synced to NetworkEquipment', 'unifiintegration'),
-                $counters['devices_synced']
-            );
+            $messages[] = sprintf(__('%d device(s) synced to NetworkEquipment', 'unifiintegration'), $counters['devices_synced']);
         }
 
         $counters['message'] = implode(', ', $messages);
@@ -158,16 +146,26 @@ class PluginUnifiintegrationSync extends CommonGLPI
     {
         global $DB;
 
-        $raw     = $api->getSites();
-        $sites   = $raw['data'] ?? [];
+        // Real API v1 response: data[].siteId, data[].meta.name (or meta.desc)
+        $sites   = $api->getAllSites();
         $siteMap = [];   // unifi_site_id => glpi_locations_id
 
+        PluginUnifiintegrationUtils::log('[' . date('Y-m-d H:i:s') . '] Sites API returned ' . count($sites) . ' site(s)');
+
         foreach ($sites as $site) {
-            $uid  = $site['siteId']   ?? ($site['id']   ?? '');
-            $name = $site['siteName'] ?? ($site['name'] ?? '');
+            // siteId is the canonical ID in v1 API
+            $uid  = $site['siteId'] ?? ($site['id'] ?? '');
+            // name is in meta.desc (display name) or meta.name (internal name)
+            $meta = $site['meta'] ?? [];
+            $name = $meta['desc'] ?? ($meta['name'] ?? ($site['siteName'] ?? ($site['name'] ?? '')));
             if (!$uid) {
                 continue;
             }
+            if (!$name) {
+                $name = $uid;
+            }
+
+            PluginUnifiintegrationUtils::log("  Site: {$name} (id: {$uid})");
 
             // Find or create GLPI Location
             $locId = $this->findOrCreateLocation($name, $uid);
@@ -318,6 +316,7 @@ class PluginUnifiintegrationSync extends CommonGLPI
             'mac'               => $data['mac'],
             'comment'           => '[UniFi] model: ' . ($data['model'] ?? '') . ' | firmware: ' . ($data['firmware_version'] ?? ''),
             'locations_id'      => $locId,
+            'entities_id'       => 0,
             'is_recursive'      => 1,
             'serial'            => $data['mac'],
         ];
