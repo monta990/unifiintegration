@@ -1,0 +1,213 @@
+# UniFi Integration — Deutsch
+# Author: Edwin Elias Alvarez
+# License: GPL v3+
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: unifiintegration 1.0.0\n"
+"PO-Revision-Date: 2026-03-29\n"
+"Last-Translator: Edwin Elias Alvarez\n"
+"Language-Team: Edwin Elias Alvarez\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: unifiintegration\n"
+
+msgid "UniFi Integration"
+msgstr "UniFi Integration"
+
+msgid "UniFi Integration — Configuration"
+msgstr "UniFi Integration — Konfiguration"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Configuration"
+msgstr "Konfiguration"
+
+msgid "API Key"
+msgstr "API-Schlüssel"
+
+msgid "Paste your UniFi Site Manager API Key"
+msgstr "Fügen Sie Ihren UniFi Site Manager API-Schlüssel ein"
+
+msgid "Generate at"
+msgstr "Erstellen bei"
+
+msgid "The key is read-only at api.ui.com (100 req/min)."
+msgstr "Der Schlüssel ist schreibgeschützt auf api.ui.com (100 Anf./Min.)."
+
+msgid "Show / Hide"
+msgstr "Anzeigen / Ausblenden"
+
+msgid "Test connection"
+msgstr "Verbindung testen"
+
+msgid "Synchronization options"
+msgstr "Synchronisierungsoptionen"
+
+msgid "Sync devices (APs, switches, routers) → NetworkEquipment"
+msgstr "Geräte synchronisieren (APs, Switches, Router) → Netzwerkgeräte"
+
+msgid "Sync sites → Location"
+msgstr "Sites synchronisieren → Standort"
+
+msgid "Sync hosts/consoles (UDM, UCG…) → NetworkEquipment"
+msgstr "Hosts/Konsolen synchronisieren (UDM, UCG…) → Netzwerkgeräte"
+
+msgid "Sync interval (cron)"
+msgstr "Synchronisierungsintervall (Cron)"
+
+msgid "5 minutes"
+msgstr "5 Minuten"
+
+msgid "10 minutes"
+msgstr "10 Minuten"
+
+msgid "15 minutes"
+msgstr "15 Minuten"
+
+msgid "30 minutes"
+msgstr "30 Minuten"
+
+msgid "1 hour"
+msgstr "1 Stunde"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Last synchronization"
+msgstr "Letzte Synchronisierung"
+
+msgid "No API Key configured. Please set your UniFi Site Manager API Key in Settings."
+msgstr "Kein API-Schlüssel konfiguriert. Legen Sie Ihren UniFi API-Schlüssel in den Einstellungen fest."
+
+msgid "Configure API Key"
+msgstr "API-Schlüssel konfigurieren"
+
+msgid "Sync now"
+msgstr "Jetzt synchronisieren"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "No devices found. Run a sync to populate data."
+msgstr "Keine Geräte gefunden. Führen Sie eine Synchronisierung durch."
+
+msgid "Total Devices"
+msgstr "Geräte gesamt"
+
+msgid "Online"
+msgstr "Online"
+
+msgid "Offline"
+msgstr "Offline"
+
+msgid "Sites"
+msgstr "Standorte"
+
+msgid "Device Status"
+msgstr "Gerätestatus"
+
+msgid "Firmware Status"
+msgstr "Firmware-Status"
+
+msgid "Devices"
+msgstr "Geräte"
+
+msgid "Search…"
+msgstr "Suchen…"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Model"
+msgstr "Modell"
+
+msgid "IP"
+msgstr "IP"
+
+msgid "MAC"
+msgstr "MAC"
+
+msgid "Site"
+msgstr "Site"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Firmware"
+msgstr "Firmware"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Last seen"
+msgstr "Zuletzt gesehen"
+
+msgid "Recent sync history"
+msgstr "Letzte Synchronisierungen"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Message"
+msgstr "Nachricht"
+
+msgid "Hosts"
+msgstr "Hosts"
+
+msgid "Last sync"
+msgstr "Letzte Sync."
+
+msgid "Never"
+msgstr "Nie"
+
+msgid "Syncing…"
+msgstr "Synchronisierung…"
+
+msgid "Sync complete"
+msgstr "Synchronisierung abgeschlossen"
+
+msgid "Sync error"
+msgstr "Synchronisierungsfehler"
+
+msgid "Configuration saved."
+msgstr "Konfiguration gespeichert."
+
+msgid "No API Key provided."
+msgstr "Kein API-Schlüssel angegeben."
+
+msgid "API Key is not configured."
+msgstr "Der API-Schlüssel ist nicht konfiguriert."
+
+msgid "Authentication failed. Check your API Key."
+msgstr "Authentifizierung fehlgeschlagen. Überprüfen Sie Ihren API-Schlüssel."
+
+msgid "cURL error: %s"
+msgstr "cURL-Fehler: %s"
+
+msgid "HTTP error %d from api.ui.com"
+msgstr "HTTP-Fehler %d von api.ui.com"
+
+msgid "Invalid JSON response: %s"
+msgstr "Ungültige JSON-Antwort: %s"
+
+msgid "This plugin requires GLPI %s or higher."
+msgstr "Dieses Plugin erfordert GLPI %s oder höher."
+
+msgid "This plugin requires the PHP cURL extension."
+msgstr "Dieses Plugin erfordert die PHP-cURL-Erweiterung."
+
+msgid "%d site(s) synced to Locations"
+msgstr "%d Site(s) zu Standorten synchronisiert"
+
+msgid "%d host(s) synced to NetworkEquipment"
+msgstr "%d Host(s) zu Netzwerkgeräten synchronisiert"
+
+msgid "%d device(s) synced to NetworkEquipment"
+msgstr "%d Gerät(e) zu Netzwerkgeräten synchronisiert"
+
+msgid "Unknown action"
+msgstr "Unbekannte Aktion"

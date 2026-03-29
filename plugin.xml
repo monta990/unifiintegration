@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <name>UniFi Integration</name>
+  <key>unifiintegration</key>
+  <state>stable</state>
+  <logo>logo.png</logo>
+  <description>
+    <en>
+      <short>Synchronizes UniFi devices, sites and consoles with GLPI 11 assets.</short>
+      <long>
+        Connects to the UniFi Site Manager Cloud API (api.ui.com) using an X-API-KEY.
+        Syncs UniFi sites to GLPI Locations, hosts (UDM, UCG…) and devices (APs, switches,
+        routers) to GLPI NetworkEquipment. Features an ECharts dashboard with device
+        status and firmware overview, manual sync button, and configurable cron task.
+      </long>
+    </en>
+    <es>
+      <short>Sincroniza dispositivos, sitios y consolas UniFi con activos de GLPI 11.</short>
+      <long>
+        Se conecta a la API Cloud de UniFi Site Manager (api.ui.com) usando X-API-KEY.
+        Sincroniza sitios UniFi a Ubicaciones de GLPI, hosts (UDM, UCG…) y dispositivos
+        (APs, switches, routers) a Equipos de Red de GLPI. Incluye dashboard con ECharts,
+        botón de sincronización manual y tarea cron configurable.
+      </long>
+    </es>
+  </description>
+  <homepage>https://github.com/monta990/unifiintegration</homepage>
+  <tags>
+    <en>
+      <tag>network</tag>
+      <tag>unifi</tag>
+      <tag>ubiquiti</tag>
+      <tag>sync</tag>
+      <tag>monitoring</tag>
+    </en>
+  </tags>
+  <license>GPLv3+</license>
+  <authors>
+    <author>Edwin Elias Alvarez</author>
+  </authors>
+  <versions>
+    <version>
+      <num>1.0.0</num>
+      <compatibility>~11.0</compatibility>
+    </version>
+  </versions>
+  <langs>
+    <lang>es_MX</lang>
+    <lang>en_US</lang>
+    <lang>en_GB</lang>
+    <lang>fr_FR</lang>
+    <lang>de_DE</lang>
+  </langs>
+</root>

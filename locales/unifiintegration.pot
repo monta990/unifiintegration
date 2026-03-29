@@ -1,0 +1,213 @@
+# UniFi Integration — Translation Template
+# Author: Edwin Elias Alvarez
+# License: GPL v3+
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: unifiintegration 1.0.0\n"
+"POT-Creation-Date: 2026-03-29\n"
+"PO-Revision-Date: 2026-03-29\n"
+"Last-Translator: Edwin Elias Alvarez\n"
+"Language-Team: Edwin Elias Alvarez\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: unifiintegration\n"
+
+msgid "UniFi Integration"
+msgstr ""
+
+msgid "UniFi Integration — Configuration"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Configuration"
+msgstr ""
+
+msgid "API Key"
+msgstr ""
+
+msgid "Paste your UniFi Site Manager API Key"
+msgstr ""
+
+msgid "Generate at"
+msgstr ""
+
+msgid "The key is read-only at api.ui.com (100 req/min)."
+msgstr ""
+
+msgid "Show / Hide"
+msgstr ""
+
+msgid "Test connection"
+msgstr ""
+
+msgid "Synchronization options"
+msgstr ""
+
+msgid "Sync devices (APs, switches, routers) → NetworkEquipment"
+msgstr ""
+
+msgid "Sync sites → Location"
+msgstr ""
+
+msgid "Sync hosts/consoles (UDM, UCG…) → NetworkEquipment"
+msgstr ""
+
+msgid "Sync interval (cron)"
+msgstr ""
+
+msgid "5 minutes"
+msgstr ""
+
+msgid "10 minutes"
+msgstr ""
+
+msgid "15 minutes"
+msgstr ""
+
+msgid "30 minutes"
+msgstr ""
+
+msgid "1 hour"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Last synchronization"
+msgstr ""
+
+msgid "No API Key configured. Please set your UniFi Site Manager API Key in Settings."
+msgstr ""
+
+msgid "Configure API Key"
+msgstr ""
+
+msgid "Sync now"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "No devices found. Run a sync to populate data."
+msgstr ""
+
+msgid "Total Devices"
+msgstr ""
+
+msgid "Online"
+msgstr ""
+
+msgid "Offline"
+msgstr ""
+
+msgid "Sites"
+msgstr ""
+
+msgid "Device Status"
+msgstr ""
+
+msgid "Firmware Status"
+msgstr ""
+
+msgid "Devices"
+msgstr ""
+
+msgid "Search…"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Model"
+msgstr ""
+
+msgid "IP"
+msgstr ""
+
+msgid "MAC"
+msgstr ""
+
+msgid "Site"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Firmware"
+msgstr ""
+
+msgid "Version"
+msgstr ""
+
+msgid "Last seen"
+msgstr ""
+
+msgid "Recent sync history"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Message"
+msgstr ""
+
+msgid "Hosts"
+msgstr ""
+
+msgid "Last sync"
+msgstr ""
+
+msgid "Never"
+msgstr ""
+
+msgid "Syncing…"
+msgstr ""
+
+msgid "Sync complete"
+msgstr ""
+
+msgid "Sync error"
+msgstr ""
+
+msgid "Configuration saved."
+msgstr ""
+
+msgid "No API Key provided."
+msgstr ""
+
+msgid "API Key is not configured."
+msgstr ""
+
+msgid "Authentication failed. Check your API Key."
+msgstr ""
+
+msgid "cURL error: %s"
+msgstr ""
+
+msgid "HTTP error %d from api.ui.com"
+msgstr ""
+
+msgid "Invalid JSON response: %s"
+msgstr ""
+
+msgid "This plugin requires GLPI %s or higher."
+msgstr ""
+
+msgid "This plugin requires the PHP cURL extension."
+msgstr ""
+
+msgid "%d site(s) synced to Locations"
+msgstr ""
+
+msgid "%d host(s) synced to NetworkEquipment"
+msgstr ""
+
+msgid "%d device(s) synced to NetworkEquipment"
+msgstr ""
+
+msgid "Unknown action"
+msgstr ""
