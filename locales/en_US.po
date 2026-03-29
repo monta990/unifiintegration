@@ -211,3 +211,6 @@ msgstr ""
 
 msgid "Unknown action"
 msgstr ""
+
+msgid "syncUnifi"
+msgstr ""

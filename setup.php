@@ -7,12 +7,11 @@
  * GLPI 11.0+
  */
 
+use Glpi\Plugin\Hooks;
+
 define('PLUGIN_UNIFIINTEGRATION_VERSION',  '1.0.0');
 define('PLUGIN_UNIFIINTEGRATION_MIN_GLPI', '11.0.0');
 define('PLUGIN_UNIFIINTEGRATION_MAX_GLPI', '12.0.0');
-
-define('PLUGIN_UNIFIINTEGRATION_RIGHT_DASHBOARD', 'dashboard');
-define('PLUGIN_UNIFIINTEGRATION_RIGHT_CONFIG',    'config');
 
 // --------------------------------------------------------------------------
 // Plugin info
@@ -62,68 +61,30 @@ function plugin_unifiintegration_check_config(bool $verbose = false): bool
 }
 
 // --------------------------------------------------------------------------
-// Init — autoloader + menu + cron
+// Init — hooks, menu, config gear
 // --------------------------------------------------------------------------
-function plugin_unifiintegration_init(): void
+function plugin_init_unifiintegration(): void
 {
-    Plugin::registerClass('PluginUnifiintegrationConfig',  ['classname' => 'PluginUnifiintegrationConfig']);
-    Plugin::registerClass('PluginUnifiintegrationApi',     ['classname' => 'PluginUnifiintegrationApi']);
-    Plugin::registerClass('PluginUnifiintegrationSync',    ['classname' => 'PluginUnifiintegrationSync']);
-}
+    global $PLUGIN_HOOKS;
 
-// --------------------------------------------------------------------------
-// Menu entry
-// --------------------------------------------------------------------------
-function plugin_unifiintegration_getMenuContent(): array
-{
-    $menu = [];
+    $PLUGIN_HOOKS[Hooks::CSRF_COMPLIANT]['unifiintegration'] = true;
+    $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['unifiintegration']    = 'front/config.form.php';
 
-    if (Session::haveRight('plugin_unifiintegration_dashboard', READ)) {
-        $menu['title'] = 'UniFi Integration';
-        $menu['page']  = '/plugins/unifiintegration/front/dashboard.php';
-        $menu['icon']  = 'ti ti-wifi';
-
-        $menu['options']['dashboard'] = [
-            'title' => __('Dashboard', 'unifiintegration'),
-            'page'  => '/plugins/unifiintegration/front/dashboard.php',
-            'icon'  => 'ti ti-layout-dashboard',
+    if (Session::getLoginUserID()) {
+        $PLUGIN_HOOKS[Hooks::MENU_TOADD]['unifiintegration'] = [
+            'tools' => 'PluginUnifiintegrationMenu',
         ];
-        $menu['options']['config'] = [
-            'title' => __('Configuration', 'unifiintegration'),
-            'page'  => '/plugins/unifiintegration/front/config.form.php',
-            'icon'  => 'ti ti-settings',
-        ];
+        Plugin::registerClass('PluginUnifiintegrationConfig');
+        Plugin::registerClass('PluginUnifiintegrationSync');
     }
-
-    return $menu;
 }
 
 // --------------------------------------------------------------------------
-// Cron tasks
+// Cron dispatcher — GLPI calls cron{TaskName}() on the itemtype
+// Task 'syncUnifi' → cronSyncUnifi() must exist in PluginUnifiintegrationSync
 // --------------------------------------------------------------------------
-function plugin_unifiintegration_getAddSearchOptions(string $itemtype): array
-{
-    return [];
-}
-
-function cron_unifiintegration_sync(CronTask $task): int
+function cron_unifiintegration_syncUnifi(CronTask $task): int
 {
     $sync = new PluginUnifiintegrationSync();
     return $sync->runCron($task);
-}
-
-function plugin_unifiintegration_getCronTasks(): array
-{
-    return [
-        [
-            'itemtype'  => 'PluginUnifiintegrationSync',
-            'name'      => 'sync',
-            'frequency' => 600,           // 10 min default
-            'param'     => null,
-            'state'     => CronTask::STATE_WAITING,
-            'mode'      => CronTask::MODE_INTERNAL,
-            'allowmode' => CronTask::MODE_INTERNAL | CronTask::MODE_EXTERNAL,
-            'comment'   => 'Synchronize UniFi devices, sites and hosts to GLPI',
-        ],
-    ];
 }

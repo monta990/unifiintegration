@@ -45,14 +45,20 @@ class PluginUnifiintegrationSync extends CommonGLPI
     }
 
     // --------------------------------------------------------------------------
-    // Cron entry point
+    // Cron entry point — GLPI calls cronSyncUnifi() matching task name 'syncUnifi'
     // --------------------------------------------------------------------------
+    public static function cronSyncUnifi(CronTask $task): int
+    {
+        $sync = new self();
+        return $sync->runCron($task);
+    }
+
     public function runCron(CronTask $task): int
     {
         $cfg = PluginUnifiintegrationConfig::getConfig();
         if (empty($cfg['api_key'])) {
             $task->addVolume(0);
-            return CronTask::RUN_SUCCESS;
+            return 1;
         }
 
         // update cron task frequency from config
@@ -73,10 +79,10 @@ class PluginUnifiintegrationSync extends CommonGLPI
                  + ($result['sites_synced']   ?? 0)
                  + ($result['hosts_synced']   ?? 0);
             $task->addVolume($vol);
-            return CronTask::RUN_SUCCESS;
+            return 1;
         } catch (RuntimeException $e) {
             $this->updateLastSync(['success' => false, 'message' => $e->getMessage()], $cfg);
-            return CronTask::RUN_ERROR;
+            return 0;
         }
     }
 
@@ -359,16 +365,25 @@ class PluginUnifiintegrationSync extends CommonGLPI
             'message'        => $result['message']        ?? '',
         ]);
 
-        // keep only last 100 log entries
-        $DB->queryOrDie(
-            "DELETE FROM `glpi_plugin_unifiintegration_synclogs`
-             WHERE id NOT IN (
-               SELECT id FROM (
-                 SELECT id FROM `glpi_plugin_unifiintegration_synclogs`
-                 ORDER BY id DESC LIMIT 100
-               ) t
-             )"
-        );
+        // Keep only last 100 log entries — delete oldest beyond that
+        $keep = $DB->request([
+            'SELECT' => 'id',
+            'FROM'   => 'glpi_plugin_unifiintegration_synclogs',
+            'ORDER'  => ['id DESC'],
+            'LIMIT'  => 100,
+        ]);
+        $keepIds = [];
+        foreach ($keep as $row) {
+            $keepIds[] = (int)$row['id'];
+        }
+        if (!empty($keepIds)) {
+            $DB->delete(
+                'glpi_plugin_unifiintegration_synclogs',
+                [
+                    'NOT' => ['id' => $keepIds],
+                ]
+            );
+        }
     }
 
     private function updateLastSync(array $result, array $cfg): void

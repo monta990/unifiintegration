@@ -211,3 +211,6 @@ msgstr "%d dispositivo(s) sincronizado(s) a Equipos de Red"
 
 msgid "Unknown action"
 msgstr "Acción desconocida"
+
+msgid "syncUnifi"
+msgstr "Sincronizar dispositivos, sitios y hosts de UniFi a Equipos de Red en GLPI"

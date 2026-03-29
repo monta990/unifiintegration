@@ -211,3 +211,6 @@ msgstr "%d Gerät(e) zu Netzwerkgeräten synchronisiert"
 
 msgid "Unknown action"
 msgstr "Unbekannte Aktion"
+
+msgid "syncUnifi"
+msgstr "UniFi-Geräte, Sites und Hosts mit GLPI-Netzwerkgeräten synchronisieren"

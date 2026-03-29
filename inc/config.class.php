@@ -52,7 +52,7 @@ class PluginUnifiintegrationConfig extends CommonGLPI
         $cfg = self::getConfig();
 
         // ── CSRF token ─────────────────────────────────────────────────────
-        $csrf = Html::getCsrfToken();
+        $csrf = Session::getNewCSRFToken();
 
         $api_key       = htmlspecialchars($cfg['api_key']       ?? '', ENT_QUOTES);
         $sync_devices  = (int)($cfg['sync_devices']  ?? 1);

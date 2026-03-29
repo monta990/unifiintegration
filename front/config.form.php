@@ -1,20 +1,16 @@
 <?php
 /**
  * UniFi Integration — front/config.form.php
- *
  * Author: Edwin Elias Alvarez
  * License: GPL v3+
  */
+global $CFG_GLPI;
 
-include('../../../inc/includes.php');
+Session::checkLoginUser();
+Session::checkRight('config', UPDATE);
 
-Session::checkRight('plugin_unifiintegration_config', READ);
-
-// Handle POST save
 if (isset($_POST['save_config'])) {
-    Session::checkRight('plugin_unifiintegration_config', UPDATE);
-    Html::checkCSRF($_POST);
-
+    // GLPI 11: CSRF validated automatically by Symfony CheckCsrfListener
     PluginUnifiintegrationConfig::saveConfig([
         'api_key'       => $_POST['api_key']       ?? '',
         'sync_devices'  => isset($_POST['sync_devices'])  ? 1 : 0,
@@ -23,23 +19,22 @@ if (isset($_POST['save_config'])) {
         'cron_interval' => (int)($_POST['cron_interval'] ?? 600),
     ]);
 
-    // update cron task frequency
-    CronTask::register(
-        'PluginUnifiintegrationSync',
-        'sync',
-        (int)($_POST['cron_interval'] ?? 600),
-        ['state' => CronTask::STATE_WAITING]
+    global $DB;
+    $DB->update(
+        CronTask::getTable(),
+        ['frequency' => (int)($_POST['cron_interval'] ?? 600), 'mode' => CronTask::MODE_EXTERNAL],
+        ['itemtype' => 'PluginUnifiintegrationSync', 'name' => 'syncUnifi']
     );
 
     Session::addMessageAfterRedirect(__('Configuration saved.', 'unifiintegration'), true, INFO);
-    Html::redirect($CFG_GLPI['root_doc'] . '/plugins/unifiintegration/front/config.form.php');
+    Html::redirect('/plugins/unifiintegration/front/config.form.php');
 }
 
 Html::header(
-    __('UniFi Integration — Configuration', 'unifiintegration'),
-    $_SERVER['PHP_SELF'],
-    'plugins',
-    'unifiintegration'
+    __('UniFi Configuration', 'unifiintegration'),
+    '',
+    'config',
+    'PluginUnifiintegrationConfig'
 );
 
 $config = new PluginUnifiintegrationConfig();
