@@ -3,7 +3,14 @@
 <p align="center"><img src="logo.png" alt="UniFi Integration Logo"></p>
 
 A GLPI 11 plugin that synchronizes your **UniFi Site Manager** data — sites, hosts (UDM, UCG…) and devices (APs, switches, routers) — directly into GLPI assets.
+<p align="center">
+  <a href="https://github.com/glpi-project/glpi" target="_blank"><img src="https://img.shields.io/badge/GLPI-11.0%2B-blue" alt="GLPI compatibility"></a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank"><img src="https://img.shields.io/badge/License-GPL%20v3%2B-green" alt="License"></a>
+  <a href="https://php.net/" target="_blank"><img src="https://img.shields.io/badge/PHP-%3E%3D8.2-purple" alt="PHP"></a>
+  <a href="https://github.com/monta990/unifiintegration/releases" target="_blank"><img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/monta990/gdmsintegration/total"></a>
+</p>
 
+---
 ## Features
 
 - Connects to the official UniFi Cloud API (`api.ui.com`) using a static `X-API-KEY`
