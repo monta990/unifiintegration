@@ -1,8 +1,11 @@
-# UniFi Integration
+<p align="center">
+  <img src="logo.png" alt="UniFi Integration Logo">
+</p>
+<h1 align="center">UniFi Integration</h1>
+<p align="center">
+  <strong>A GLPI 11 plugin that synchronizes your **UniFi Site Manager** data — sites, hosts (UDM, UCG…) and devices (APs, switches, routers) — directly into GLPI assets.</strong>
+</p>
 
-<p align="center"><img src="logo.png" alt="UniFi Integration Logo"></p>
-
-A GLPI 11 plugin that synchronizes your **UniFi Site Manager** data — sites, hosts (UDM, UCG…) and devices (APs, switches, routers) — directly into GLPI assets.
 <p align="center">
   <a href="https://github.com/glpi-project/glpi" target="_blank"><img src="https://img.shields.io/badge/GLPI-11.0%2B-blue" alt="GLPI compatibility"></a>
   <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank"><img src="https://img.shields.io/badge/License-GPL%20v3%2B-green" alt="License"></a>
