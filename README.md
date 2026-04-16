@@ -14,6 +14,8 @@
 </p>
 
 ---
+## EXPERIMENTAL NOT WORKS
+
 ## Features
 
 - Connects to the official UniFi Cloud API (`api.ui.com`) using a static `X-API-KEY`
